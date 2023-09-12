@@ -58,7 +58,7 @@ void loop() {
     if (temp >= 23.0) {
       Serial.println("Température Élevée !");
       Serial1.write("r");
-    } else{
+    } else {
       Serial1.write("s");
     }
   }
