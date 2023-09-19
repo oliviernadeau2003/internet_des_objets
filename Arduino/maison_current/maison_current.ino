@@ -44,8 +44,6 @@ const int lumiereMax = 300;
 const int eauMax = 800;
 const int solHumidMax = 50;
 const int solHumidMin = 10;
-String commande[8];
-int commandeIndex = 0;
 
 bool megaBool = false;
 bool consoleBool = false;
@@ -73,6 +71,23 @@ String passwd;
 int pluieBool = false;
 String reception;
 bool lumiereActManuel;
+int commande[8];
+int commandeIndex = 0;
+
+// MENU
+int menuCommandeIndex = 0;
+int menuIndex = 0;
+String stringsMenu[] = { "Senseurs", "Temperature", "Commande Recue", "Statut" };
+
+int btnGauche = 0;
+int btnDroite = 0;
+
+bool btnGaucheFlag = false;
+bool btnDroiteFlag = false;
+
+int indexBtnDroite = 0;
+
+// ---
 
 String servo1;
 int servo1_angle;
@@ -98,11 +113,15 @@ void setup() {
   Serial.println("Senseurs Maison Keyes Version " + version);
   deuxiemePortSerie.begin(9600);  // Initialiser le port série pour le Bluetooth ou une autre module en série
 
-  mylcd.init();              // Initialiser le paneau LCD
-  mylcd.backlight();         // Allumer la DEL du paneau LCD
-  mylcd.setCursor(0, 0);     // En informatique, on commence à compter à 0
-  mylcd.print("passcord:");  // Afficher sur le LCD "passcord:" sur la première ranger de la première colone
+  mylcd.init();       // Initialiser le paneau LCD
+  mylcd.backlight();  // Allumer la DEL du paneau LCD
+                      // mylcd.setCursor(0, 0);     // En informatique, on commence à compter à 0
+                      // mylcd.print("passcord:");  // Afficher sur le LCD "passcord:" sur la première ranger de la première colone
+                      // mylcd.clear();
+
   mylcd.clear();
+  mylcd.setCursor(0, 0);
+  mylcd.print(stringsMenu[menuCommandeIndex]);
 
   // Definition des pines en mode sortie ---
   pinMode(moteurDirectionPin, OUTPUT);
@@ -134,41 +153,34 @@ void loop() {
     val = deuxiemePortSerie.read();
     reception = ("2iem port série : ");
     megaBool = true;
-    commande[commandeIndex] = val;
-    mylcd.setCursor(0, 0);
-    mylcd.print("Commande : ");
-    mylcd.print(val);
-    commandeIndex++;
-    if (commandeIndex >= 8) {
-      commandeIndex = 0;
-    }
+    // commande[commandeIndex] = val;
+    // mylcd.setCursor(0, 0);
+    // mylcd.print("Commande : ");
+    // mylcd.print(val);
+    // commandeIndex++;
+    // if (commandeIndex >= 8) {
+    //   commandeIndex = 0;
+    // }
   }
   if (Serial.available() > 0) {
     val = Serial.read();
     reception = ("Console : ");
     consoleBool = true;
-    commande[commandeIndex] = val;
-    mylcd.setCursor(0, 0);
-    mylcd.print("Commande : ");
-    mylcd.print(val);
-    commandeIndex++;
-    if (commandeIndex >= 8) {
-      commandeIndex = 0;
-    }
+    // commande[commandeIndex] = val;
+    // mylcd.setCursor(0, 0);
+    // mylcd.print("Commande : ");
+    // mylcd.print(val);
+    // commandeIndex++;
+    // if (commandeIndex >= 8) {
+    //   commandeIndex = 0;
+    // }
   }
 
   if (megaBool || consoleBool) {
     digitalWrite(DELJaunePin, HIGH);
   }
 
-  if (!digitalRead(boutonDroitePin)) {
-    Serial.print("val : ");
-    Serial.println(val);
-
-    mylcd.setCursor(0, 0);
-    mylcd.print("Commande : ");
-    mylcd.print(val);
-  }
+  menu();
 
   switch (val) {
     case 'a':  // Allumer la DEL blanche
@@ -231,8 +243,7 @@ void loop() {
       //delay(500);
       break;
     case 'm':
-      //servo_9.write(0);
-      //delay(500);
+      //
       break;
     case 'n':
       //servo_10.write(180);
@@ -343,93 +354,67 @@ void lireSenseurs() {
       }
     }
   }
-
-  //door();
 }
 
-void door() {
-  boutonGauche = digitalRead(boutonGauchePin);
-  boutonDroit = digitalRead(boutonDroitePin);
 
-  if (boutonGauche == 0) {
-    delay(10);
-    while (boutonGauche == 0) {
-      boutonGauche = digitalRead(4);
-      btn1_num = btn1_num + 1;
-      delay(100);
-    }
-  }
-  if (btn1_num >= 1 && btn1_num < 5) {
-    Serial.print(".");
-    Serial.print("");
-    passwd = String(passwd) + String(".");
-    pass = String(pass) + String(".");
-    mylcd.setCursor(1 - 1, 2 - 1);
-    mylcd.print(pass);
-  }
-  if (btn1_num >= 5) {
-    Serial.print("-");
-    passwd = String(passwd) + String("-");
-    pass = String(pass) + String("-");
-    mylcd.setCursor(1 - 1, 2 - 1);
-    mylcd.print(pass);
-  }
-  if (boutonDroit == 0) {
-    delay(10);
-    if (boutonDroit == 0) {
-      if (passwd == ".--.-.") {
-        mylcd.clear();
-        mylcd.setCursor(1 - 1, 2 - 1);
-        mylcd.print("open!");
-        //servo_9.write(100);
-        delay(300);
-        delay(5000);
-        passwd = "";
-        pass = "";
-        mylcd.clear();
-        mylcd.setCursor(1 - 1, 1 - 1);
-        mylcd.print("password:");
+void menu() {
+  btnGauche = digitalRead(boutonGauchePin);
+  btnDroite = digitalRead(boutonDroitePin);
 
-      } else {
-        mylcd.clear();
-        mylcd.setCursor(1 - 1, 1 - 1);
-        mylcd.print("error!");
-        passwd = "";
-        pass = "";
-        delay(2000);
-        mylcd.setCursor(1 - 1, 1 - 1);
-        mylcd.print("again");
-      }
+  // Bouton gauche
+  if (btnGauche == 0) {
+    mylcd.clear();
+    mylcd.setCursor(0, 0);
+    mylcd.print(stringsMenu[menuCommandeIndex]);
+  }
+  if (btnGauche == 0 && !btnGaucheFlag) {
+    menuCommandeIndex++;
+    btnGaucheFlag = true;
+    indexBtnDroite = 0;  // reset de l'index du bouton droite
+  }
+  if (btnGauche == 1 && btnGaucheFlag) {
+    btnGaucheFlag = false;
+  }
+
+  // Bouton Droite
+  if (btnDroite == 0) {
+    mylcd.setCursor(0, 1);
+    switch (menuCommandeIndex) {
+      case 0:
+        mylcd.print("");
+        mylcd.print(indexBtnDroite);
+        break;
+      case 1:
+        mylcd.print("Tmp:");
+        mylcd.print("00.00 ");
+        mylcd.print("Hum:");
+        mylcd.print("00 ");
+        break;
+      case 2:
+        mylcd.print("Alias: ");
+        mylcd.print(val);
+        break;
+      case 3:
+        mylcd.print("");
+        break;
     }
   }
 
-  infrar = digitalRead(2);
-  if (infrar == 0 && (val != 'l' && val != 't')) {
-    delay(50);
+  if (btnDroite == 0 && !btnDroiteFlag) {
+    indexBtnDroite++;
+    btnDroiteFlag = true;
   }
-  if (boutonDroit == 0) {
-    delay(10);
-    while (boutonDroit == 0) {
-      boutonDroit = digitalRead(8);
-      btn2_num = btn2_num + 1;
-      delay(100);
-      if (btn2_num >= 15) {
-        tone(3, 532);
-        delay(125);
-        mylcd.clear();
-        mylcd.setCursor(1 - 1, 1 - 1);
-        mylcd.print("password:");
-        mylcd.setCursor(1 - 1, 1 - 1);
-        mylcd.print("wait");
-      } else {
-        noTone(3);
-      }
-    }
+  if (btnDroite == 1 && btnDroiteFlag) {
+    btnDroiteFlag = false;
   }
 
-  btn1_num = 0;
-  btn2_num = 0;
+  // ---
+  // reset du menu
+  if (menuCommandeIndex >= 4) {
+    menuCommandeIndex = 0;
+  }
 }
+
 
 //PWM control
 void pwm_control() {
