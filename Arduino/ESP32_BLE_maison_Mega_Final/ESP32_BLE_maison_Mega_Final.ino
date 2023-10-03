@@ -115,14 +115,14 @@ bool connectToServer() {
   // address, it will be recognized type of peer device address (public or
   // private) RT-Ben oui!, c'esst clair?????!
 
-//#ifdef DEBUG
+  //#ifdef DEBUG
   if (disconnected == false) {
     Serial.println(F(" - Maintenant Connecté au serveur"));
   } else {
     Serial.println(F("***** NON connecté su serveur *****"));
     return false;
   }
-//#endif
+  //#endif
 
   // Obtenir la référence au service. On avait déjà le service
   // Obtenu lors du scan (setup) mais on vvérifie
@@ -261,13 +261,13 @@ void setup() {
   pBLEScan->setInterval(100);
   //pBLEScan->setWindow(449);
   pBLEScan->setWindow(99);
-  pBLEScan->setActiveScan(true);  //Active scan utilise plus de puissance, mais esst plus rapide
-  BLEScanResults foundDevices = pBLEScan->start(30, false); //commencer le scan. 30 secondes en laboratoire
+  pBLEScan->setActiveScan(true);                             //Active scan utilise plus de puissance, mais esst plus rapide
+  BLEScanResults foundDevices = pBLEScan->start(30, false);  //commencer le scan. 30 secondes en laboratoire
   //on revient ici après le scan
   Serial.print("Objets trouvés: ");
   Serial.println(foundDevices.getCount());
   Serial.println("Scan complété!");
-  pBLEScan->clearResults();   // delete results fromBLEScan buffer to release memory
+  pBLEScan->clearResults();  // delete results fromBLEScan buffer to release memory
   delay(2000);
 
 

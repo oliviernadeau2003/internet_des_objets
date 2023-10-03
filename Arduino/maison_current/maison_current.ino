@@ -290,6 +290,10 @@ void loop() {
       digitalWrite(moteurDirectionPin, LOW);    // Set la direction de rotation du fan
       analogWrite(moteurVitessePin, fans_val);  // allume le fan à la vitesse choisi
       break;
+    case 'x':
+      Serial.print("TEMPERATURE\n");
+      Serial.print(val);
+      break;
   }
   val = "";  // Reset la val
 }
@@ -385,6 +389,7 @@ void menu() {
         mylcd.print(indexBtnDroite);
         break;
       case 1:
+        retrieveTempAndHumi();
         mylcd.print("Tmp:");
         mylcd.print("00.00 ");
         mylcd.print("Hum:");
@@ -415,6 +420,9 @@ void menu() {
   }
 }
 
+void retrieveTempAndHumi() {
+
+}
 
 //PWM control
 void pwm_control() {
