@@ -74,6 +74,9 @@ bool lumiereActManuel;
 int commande[8];
 int commandeIndex = 0;
 
+int temp = 0;
+int hum = 0;
+
 // MENU
 int menuCommandeIndex = 0;
 int menuIndex = 0;
@@ -391,7 +394,7 @@ void menu() {
       case 1:
         retrieveTempAndHumi();
         mylcd.print("Tmp:");
-        mylcd.print("00.00 ");
+        mylcd.print("00 ");
         mylcd.print("Hum:");
         mylcd.print("00 ");
         break;
