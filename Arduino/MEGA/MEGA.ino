@@ -39,8 +39,8 @@ void loop() {
     charConsole = Serial.read();
     Serial.print("de la console: ");
     Serial.println(charConsole);
-    Serial2.print(charConsole);
     Serial1.print(charConsole);
+    Serial2.print(charConsole);
   }
   if (Serial2.available()) {
     charHM10 = Serial2.read();

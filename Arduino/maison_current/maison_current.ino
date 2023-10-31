@@ -180,7 +180,7 @@ void loop() {
   }
 
   if (megaBool || consoleBool) {
-    digitalWrite(DELJaunePin, HIGH);
+    // digitalWrite(DELJaunePin, HIGH);
   }
 
   menu();
