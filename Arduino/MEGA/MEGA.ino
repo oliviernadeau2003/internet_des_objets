@@ -21,7 +21,6 @@ char charHM10 = 0;
 
 void setup() {
 
-
   Serial.begin(9600);   // Console
   Serial1.begin(9600);  // Maison
   Serial2.begin(9600);  // HM-10
@@ -48,7 +47,8 @@ void loop() {
     Serial.println(charHM10);
     Serial1.print(charHM10);
   }
-  if (millis() % 1000 == 0) {  //à chaque seconde
+
+  if (millis() % 5000 == 0) {  //à chaque seconde
     float temp = sht31.getTemperature();
     float hum = sht31.getHumidity();
     int temperature = (temp * 100);

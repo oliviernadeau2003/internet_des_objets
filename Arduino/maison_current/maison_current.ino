@@ -52,7 +52,6 @@ bool btnflag = false;
 
 const int version = 2;
 
-String buffer;
 int btn1_num;
 int btn2_num;
 int button1;
@@ -73,6 +72,9 @@ String reception;
 bool lumiereActManuel;
 int commande[8];
 int commandeIndex = 0;
+
+char buffer[1000];  //initialise buffer 1000 to allow for excess data
+int index = 0;      //index region for buffer
 
 int temp = 0;
 int hum = 0;
@@ -150,12 +152,12 @@ void setup() {
 }
 
 void loop() {
-  lireSenseurs();  // Pour toujours avoir l'état de la maison
 
   if (deuxiemePortSerie.available() > 0) {
     val = deuxiemePortSerie.read();
     reception = ("2iem port série : ");
     megaBool = true;
+    // Serial.println(val);
     // commande[commandeIndex] = val;
     // mylcd.setCursor(0, 0);
     // mylcd.print("Commande : ");
@@ -169,6 +171,7 @@ void loop() {
     val = Serial.read();
     reception = ("Console : ");
     consoleBool = true;
+    // Serial.println(val);
     // commande[commandeIndex] = val;
     // mylcd.setCursor(0, 0);
     // mylcd.print("Commande : ");
@@ -178,6 +181,8 @@ void loop() {
     //   commandeIndex = 0;
     // }
   }
+
+  lireSenseurs();  // Pour toujours avoir l'état de la maison
 
   if (megaBool || consoleBool) {
     // digitalWrite(DELJaunePin, HIGH);
@@ -283,19 +288,26 @@ void loop() {
       //delay(300);
       break;
     case 'v':  // Allumer la DEL jaune selon une certaine intensité
-      led2 = Serial.readStringUntil('#');
-      value_led2 = String(led2).toInt();     // transforme la valeur en int
+
+      if (!megaBool) {
+        led2 = Serial.readStringUntil('#');
+      } else {
+        // Sa vient du mega
+      }
+
+      int value_led2 = String(led2).toInt();  // transforme la valeur en int
+
       analogWrite(DELJaunePin, value_led2);  // Allume la DEL jaune
       break;
     case 'w':  // Allumer le fan selon une certaine intensité
       fans_char = Serial.readStringUntil('#');
-      fans_val = String(fans_char).toInt();     // Sauvegarde la valeur
-      digitalWrite(moteurDirectionPin, LOW);    // Set la direction de rotation du fan
-      analogWrite(moteurVitessePin, fans_val);  // allume le fan à la vitesse choisi
+      int fans_val = String(fans_char).toInt();  // Sauvegarde la valeur
+      digitalWrite(moteurDirectionPin, LOW);     // Set la direction de rotation du fan
+      analogWrite(moteurVitessePin, fans_val);   // allume le fan à la vitesse choisi
       break;
     case 'x':
-      Serial.print("TEMPERATURE\n");
-      Serial.print(val);
+      Serial.print("TEMPERATURE : ");
+      Serial.println(val);
       break;
   }
   val = "";  // Reset la val
@@ -424,7 +436,6 @@ void menu() {
 }
 
 void retrieveTempAndHumi() {
-
 }
 
 //PWM control
