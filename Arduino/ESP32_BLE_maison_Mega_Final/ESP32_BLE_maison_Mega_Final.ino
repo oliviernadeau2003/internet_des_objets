@@ -32,6 +32,7 @@ static BLEAdvertisedDevice* myDevice;
 
 //Identification du serveur MQTT
 //Notre accès MQTT passe par le WIFI
+//    LOCAL
 EspMQTTClient client(
   "CSTJ-UBI-D139",
   "$$12345678",
@@ -41,9 +42,6 @@ EspMQTTClient client(
   nomBLE,  // Votre nom de client UNIQUE (voir ci-haut)
   1883     // Le port MQTT, default to 1883. Ligne pas obligatoire
 );
-
-
-
 
 // Callback losqu'on reçoit du data sur le bluetooth du ESP32 (dans notre cas initié par le HM-10)
 static void notifyCallback(

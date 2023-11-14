@@ -157,7 +157,7 @@ void loop() {
     val = deuxiemePortSerie.read();
     reception = ("2iem port série : ");
     megaBool = true;
-    // Serial.println(val);
+    Serial.println(val);
     // commande[commandeIndex] = val;
     // mylcd.setCursor(0, 0);
     // mylcd.print("Commande : ");
@@ -171,7 +171,7 @@ void loop() {
     val = Serial.read();
     reception = ("Console : ");
     consoleBool = true;
-    // Serial.println(val);
+    Serial.println(val);
     // commande[commandeIndex] = val;
     // mylcd.setCursor(0, 0);
     // mylcd.print("Commande : ");
@@ -257,10 +257,10 @@ void loop() {
       //servo_10.write(180);
       //delay(500);
       break;
-    case 'o':
-      //servo_10.write(0);
-      //delay(500);
-      break;
+    // case 'o':
+    //   //servo_10.write(0);
+    //   //delay(500);
+    //   break;
     case 'p':  // Allumer la LED jaune
       digitalWrite(DELJaunePin, HIGH);
       break;
@@ -287,28 +287,24 @@ void loop() {
       // servo_10.write(servo2_angle);  //set the angle of servo connected to digital 10 to servo2_angle
       //delay(300);
       break;
-    case 'v':  // Allumer la DEL jaune selon une certaine intensité
-
+    case 'v':  // Allumer la DEL jaune selon une certaine intensite
       if (!megaBool) {
         led2 = Serial.readStringUntil('#');
       } else {
         // Sa vient du mega
+        if (deuxiemePortSerie.available() > 0) led2 = deuxiemePortSerie.parseInt();
       }
-
       int value_led2 = String(led2).toInt();  // transforme la valeur en int
+      analogWrite(DELJaunePin, value_led2);   // Allume la DEL jaune
+      break;
+    case 'w':
+      Serial.print("w");
+      break;
 
-      analogWrite(DELJaunePin, value_led2);  // Allume la DEL jaune
-      break;
-    case 'w':  // Allumer le fan selon une certaine intensité
-      fans_char = Serial.readStringUntil('#');
-      int fans_val = String(fans_char).toInt();  // Sauvegarde la valeur
-      digitalWrite(moteurDirectionPin, LOW);     // Set la direction de rotation du fan
-      analogWrite(moteurVitessePin, fans_val);   // allume le fan à la vitesse choisi
-      break;
-    case 'x':
-      Serial.print("TEMPERATURE : ");
-      Serial.println(val);
-      break;
+      // case 'x':
+      //   Serial.print("TEMPERATURE : ");
+      //   Serial.println(val);
+      //   break;
   }
   val = "";  // Reset la val
 }
@@ -331,7 +327,7 @@ void lireSenseurs() {
   if (!lumiereActManuel) {     // Si la lumière n'a pas été activer manuelement
     if (lumiere < lumiereMax)  // Si la lumière est plus base que la lumière max
     {
-      Serial.println("lumière insuffisante");
+      // Serial.println("lumière insuffisante");
       infrar = digitalRead(detectMouvPin);  // sauvegarde la valeur du détecteur de mouvement
 
       if (infrar) {
@@ -439,7 +435,7 @@ void retrieveTempAndHumi() {
 }
 
 //PWM control
-void pwm_control() {
-  switch (val) {
-  }
-}
+// void pwm_control() {
+//   switch (val) {
+//   }
+// }
